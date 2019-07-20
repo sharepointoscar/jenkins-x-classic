@@ -1,0 +1,24 @@
+extends:
+  file: ../pipeline.yaml
+agent:
+  label: jenkins-terraform
+  container: terraform
+pipelines:
+  pullRequest:
+    build:
+      steps:
+      - sh: terraform plan
+        name: terraform-plan
+  release:
+    setVersion:
+      steps:
+      - sh: echo \$(jx-release-version) > VERSION
+        name: next-version
+        comment: so we can retrieve the version in later steps
+      # TODO modify package.json?
+      - sh: jx step tag --version \$(cat VERSION)
+        name: tag-version
+    build:
+      steps:
+      - sh: terraform plan
+        name: relase-build-terraform-plan
