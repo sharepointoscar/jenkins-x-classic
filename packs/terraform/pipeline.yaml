@@ -20,5 +20,8 @@ pipelines:
         name: tag-version
     build:
       steps:
+      - command: terraform
+        args: ['init']
+        name: release-build-terraform-init
       - sh: terraform plan
         name: relase-build-terraform-plan
